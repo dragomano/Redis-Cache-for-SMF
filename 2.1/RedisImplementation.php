@@ -5,10 +5,10 @@
  *
  * @package Redis Cache for SMF
  * @author Bugo https://dragomano.ru/lessons/redis-cache-for-smf
- * @copyright 2022 Bugo
+ * @copyright 2022-2024 Bugo
  * @license https://opensource.org/licenses/BSD-3-Clause BSD
  *
- * @version 0.1
+ * @version 0.2
  */
 
 namespace SMF\Cache\APIs;
@@ -28,8 +28,7 @@ class RedisImplementation extends CacheApi implements CacheApiInterface
 {
 	const CLASS_KEY = 'cache_redis';
 
-	/** @var Redis */
-	private $redis = null;
+	private ?Redis $redis = null;
 
 	public function isSupported($test = false)
 	{
@@ -37,8 +36,9 @@ class RedisImplementation extends CacheApi implements CacheApiInterface
 
 		$supported = class_exists('Redis');
 
-		if ($test)
+		if ($test) {
 			return $supported;
+		}
 
 		return parent::isSupported() && $supported && !empty($cache_redis);
 	}
@@ -60,8 +60,9 @@ class RedisImplementation extends CacheApi implements CacheApiInterface
 
 			$server = trim($servers[array_rand($servers)]);
 
-			if (empty($server))
+			if (empty($server)) {
 				continue;
+			}
 
 			if (strpos($server, '/') !== false) {
 				$host = $server;
@@ -83,8 +84,9 @@ class RedisImplementation extends CacheApi implements CacheApiInterface
 
 		$value = $this->redis->get($key);
 
-		if ($value === false)
+		if ($value === false) {
 			return null;
+		}
 
 		return $value;
 	}
@@ -123,23 +125,26 @@ class RedisImplementation extends CacheApi implements CacheApiInterface
 				'subtext' => $txt[self::CLASS_KEY . '_servers_subtext']);
 		}
 
-		if (!isset($context['settings_post_javascript']))
+		if (!isset($context['settings_post_javascript'])) {
 			$context['settings_post_javascript'] = '';
+		}
 
-		if (empty($context['settings_not_writable']))
+		if (empty($context['settings_not_writable'])) {
 			$context['settings_post_javascript'] .= '
 			$("#cache_accelerator").change(function (e) {
 				var cache_type = e.currentTarget.value;
 				$("#' . self::CLASS_KEY . '").prop("disabled", cache_type !== "RedisImplementation");
 			});';
+		}
 	}
 
 	public function getVersion()
 	{
 		$info = $this->redis->info();
 
-		if (empty($info))
+		if (empty($info)) {
 			return false;
+		}
 
 		return $info['redis_version'];
 	}
