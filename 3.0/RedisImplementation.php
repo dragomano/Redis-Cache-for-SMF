@@ -8,7 +8,7 @@
  * @copyright 2022-2024 Bugo
  * @license https://opensource.org/licenses/BSD-3-Clause BSD
  *
- * @version 0.2
+ * @version 0.3
  */
 
 namespace SMF\Cache\APIs;
@@ -103,10 +103,22 @@ class RedisImplementation extends CacheApi implements CacheApiInterface
 				$this->port = $server[1] ?? $this->port;
 			}
 
-			if (empty(Config::$db_persist)) {
-				$connected = $this->redis->connect($host, $this->port);
+			try {
+				if (empty(Config::$db_persist)) {
+					$connected = $this->redis->connect($host, $this->port);
+				} else {
+					$connected = $this->redis->pconnect($host, $this->port);
+				}
+			} catch (RedisException) {
+				$connected = false;
+			}
+		}
+
+		if ($connected && !empty(Config::$cache_redis_password)) {
+			if (!empty(Config::$cache_redis_username)) {
+				$this->redis->auth(Config::$cache_redis_username, Config::$cache_redis_password);
 			} else {
-				$connected = $this->redis->pconnect($host, $this->port);
+				$this->redis->auth(Config::$cache_redis_password);
 			}
 		}
 
@@ -174,7 +186,14 @@ class RedisImplementation extends CacheApi implements CacheApiInterface
 				'file',
 				'text',
 				0,
-				'subtext' => Lang::$txt[self::CLASS_KEY . '_servers_subtext']);
+				'subtext' => Lang::$txt[self::CLASS_KEY . '_servers_subtext']
+			);
+			$config_vars[] = array(
+				self::CLASS_KEY . '_password',
+				Lang::$txt[self::CLASS_KEY . '_password'],
+				'file',
+				'password',
+			);
 		}
 
 		if (!isset(Utils::$context['settings_post_javascript'])) {

@@ -25,6 +25,8 @@ $txt['redisimplementation_cache'] = 'Redis caching';
 $txt['cache_redis_settings'] = 'Redis settings';
 $txt['cache_redis_servers'] = 'Redis servers';
 $txt['cache_redis_servers_subtext'] = 'Example: 127.0.0.1:6379';
+$txt['cache_redis_username'] = 'Username';
+$txt['cache_redis_password'] = 'Password';
 ```
 
 `Modifications.russian.php`:
@@ -34,6 +36,25 @@ $txt['redisimplementation_cache'] = 'Redis';
 $txt['cache_redis_settings'] = 'Настройки Redis';
 $txt['cache_redis_servers'] = 'Сервера Redis';
 $txt['cache_redis_servers_subtext'] = 'Например: 127.0.0.1:6379';
+$txt['cache_redis_username'] = 'Имя пользователя';
+$txt['cache_redis_password'] = 'Пароль';
+```
+
+`Subs-Admin.php` (SMF 2.1) or `Config.php` (SMF 3.0), add before `'db_show_debug' => `:
+
+```php
+		'cache_redis_password' => [
+			'text' => implode("\n", [
+				'/**',
+				' * Database password for when connecting with Redis',
+				' *',
+				' * @var string',
+				' */',
+			]),
+			'default' => '',
+			'type' => 'string',
+			'is_password' => true,
+		],
 ```
 
 Copy `RedisImplementation.php` to `Sources/Cache/APIs`, then select _Redis caching_ in settings.
