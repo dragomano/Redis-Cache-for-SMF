@@ -8,7 +8,7 @@
  * @copyright 2022-2024 Bugo
  * @license https://opensource.org/licenses/BSD-3-Clause BSD
  *
- * @version 0.3
+ * @version 0.4
  */
 
 namespace SMF\Cache\APIs;
@@ -205,6 +205,8 @@ class RedisImplementation extends CacheApi implements CacheApiInterface
 			$("#cache_accelerator").change(function (e) {
 				var cache_type = e.currentTarget.value;
 				$("#' . self::CLASS_KEY . '").prop("disabled", cache_type !== "RedisImplementation");
+				$("#' . self::CLASS_KEY . '_username").prop("disabled", cache_type !== "RedisImplementation");
+				$("#' . self::CLASS_KEY . '_password").prop("disabled", cache_type !== "RedisImplementation");
 			});';
 		}
 	}
